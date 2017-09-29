@@ -20,6 +20,7 @@ import java.util.Calendar;
 public class ImageUtils {
     private static String TAG = ImageUtils.class.toString();
 
+    // lưu image vào 1 folder riêng (folder DrawingNotes)
     public static void saveImage(Bitmap bitmap, Context context) {
         String root = Environment.getExternalStorageDirectory().toString();
         File myFolder = new File(root + "/DrawingNotes");
@@ -36,6 +37,7 @@ public class ImageUtils {
             fout.flush();
             fout.close();
 
+            //hiện thông báo sau khi save xong
             Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();

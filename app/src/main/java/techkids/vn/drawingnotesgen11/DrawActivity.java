@@ -38,10 +38,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         addListeners();
     }
 
+    // thêm view vào = code. lý do của việc add = code mà k phải = xml là vì chưa biết trước kích thước view
+    // (vẽ lên background trắng -> size full màn hình, vẽ lên ảnh -> size = size ảnh)
     private void addDrawingView() {
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.rl_drawing);
 
         drawingView = new DrawingView(this);
+        // set kích thước cho view
         drawingView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         relativeLayout.addView(drawingView);
     }
@@ -97,12 +100,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveImage() {
+        // lấy ra bitmap chứa tất cả những gì đã vẽ lên view
         drawingView.setDrawingCacheEnabled(true);
         drawingView.buildDrawingCache();
         Bitmap bitmap = drawingView.getDrawingCache();
 
         Log.d(TAG, "saveImage: " + bitmap.getWidth());
 
+        // lưu vào gallery
         ImageUtils.saveImage(bitmap, this);
     }
 
@@ -112,6 +117,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 .setTitle("Choose your color")
                 .initialColor(currentColor)
                 .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                //density càng cao -> càng nhiều màu
                 .density(12)
                 .setPositiveButton("Ok", new ColorPickerClickListener() {
                     @Override
@@ -120,6 +126,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                         currentColor = i;
                     }
                 })
+                // chỉ cho user chỉnh sáng tối, k cho chỉnh đậm nhạt
                 .lightnessSliderOnly()
                 .build()
                 .show();

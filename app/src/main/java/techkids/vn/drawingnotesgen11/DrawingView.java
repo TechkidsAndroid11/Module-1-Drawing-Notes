@@ -18,9 +18,13 @@ import android.view.View;
 public class DrawingView extends View {
     private static final String TAG = DrawingView.class.toString();
 
+    // có thể hiểu như 1 cái bảng/ 1 tờ giấy trắng để vẽ lên
     private Canvas canvas;
+    // bút vẽ
     private Paint paint;
+    // đường vẽ
     private Path path;
+    // lưu lại từng nét vẽ sau mỗi lần nhấc bút
     private Bitmap bitmap;
 
     public DrawingView(Context context) {
@@ -37,15 +41,19 @@ public class DrawingView extends View {
         Log.d(TAG, "DrawingView: ");
     }
 
+    // hàm đc gọi sau khi view thay đổi kích thước xong
+    // ban đầu kích thước tất cả các view là 0, 0; qua 1 đoạn tính toán mới thay đổi sang kích thước mới
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
         bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.WHITE);
+
         canvas = new Canvas(bitmap);
     }
 
+    // đc gọi lần đầu khi view khởi tạo và sau mỗi lần gọi invalidate()
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -64,6 +72,7 @@ public class DrawingView extends View {
             case MotionEvent.ACTION_DOWN: {
                 path.moveTo(touchX, touchY);
 
+                // set lại màu + nét vẽ cho paint
                 paint.setColor(DrawActivity.currentColor);
                 paint.setStrokeWidth(DrawActivity.currentSize);
                 break;
@@ -73,13 +82,19 @@ public class DrawingView extends View {
                 break;
             }
             case MotionEvent.ACTION_UP: {
+                //commit lại nét vẽ trước khi reset. nếu k nhấc tay ra nét vẽ sẽ biến mất
                 canvas.drawPath(path, paint);
+                //reset lại path, nếu k đến lúc đổi màu nó sẽ đổi màu tất cả các line
                 path.reset();
                 break;
             }
         }
-
+        // có thể đc gọi cả bởi system hoặc user. gọi mỗi khi cần update view
+        // vd: edittext đang ở trạng thái bt, bấm vào ra trạng thái khác -> do system gọi invalidate()
         invalidate();
+
+        // return true để nhận event touch liên tục
+        // return false chỉ nhận event lần đầu chạm tay xuống
         return true;
     }
 }
