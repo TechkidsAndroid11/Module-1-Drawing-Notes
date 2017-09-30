@@ -39,6 +39,12 @@ public class ImageUtils {
 
             //hiện thông báo sau khi save xong
             Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show();
+
+            //scan lai gallery de hien thi cac file moi
+            MediaScannerConnection.scanFile(context,
+                    new String[]{imageFile.getAbsolutePath()},
+                    null, null);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

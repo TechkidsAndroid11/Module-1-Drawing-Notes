@@ -33,9 +33,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_draw);
 
         setupUI();
-        addDrawingView();
 
+        if (getIntent().getBooleanExtra(MainActivity.MODE_CAMERA, false)) {
+            openCamera();
+            Log.d(TAG, "onCreate: openCamera");
+        } else {
+            addDrawingView();
+            Log.d(TAG, "onCreate: addDrawingView");
+        }
         addListeners();
+    }
+
+    private void openCamera() {
+
     }
 
     // thêm view vào = code. lý do của việc add = code mà k phải = xml là vì chưa biết trước kích thước view
@@ -94,6 +104,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.iv_save: {
                 saveImage();
+                ivSave.setClickable(false);
+                this.finish();
                 break;
             }
         }
