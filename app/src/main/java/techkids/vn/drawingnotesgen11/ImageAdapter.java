@@ -3,9 +3,9 @@ package techkids.vn.drawingnotesgen11;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
@@ -47,14 +47,17 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView = new ImageView(context);
 
         //set size
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 200));
+        imageView.setLayoutParams(new AbsListView.LayoutParams(
+                AbsListView.LayoutParams.MATCH_PARENT, 200));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setPadding(5, 5, 5, 5);
         imageView.setCropToPadding(true);
 
         //set data
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePaths.get(i));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 3;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePaths.get(i), options);
         imageView.setImageBitmap(bitmap);
 
         return imageView;
