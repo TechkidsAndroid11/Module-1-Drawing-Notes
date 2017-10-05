@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
@@ -21,14 +22,15 @@ public class DrawingView extends View {
     // có thể hiểu như 1 cái bảng/ 1 tờ giấy trắng để vẽ lên
     private Canvas canvas;
     // bút vẽ
-    private Paint paint;
+    private Paint paint, imagePaint;
     // đường vẽ
     private Path path;
     // lưu lại từng nét vẽ sau mỗi lần nhấc bút
     private Bitmap bitmap;
 
-    public DrawingView(Context context) {
+    public DrawingView(Context context, Bitmap bitmap) {
         super(context);
+        this.bitmap = bitmap;
 
         path = new Path();
 
@@ -37,6 +39,8 @@ public class DrawingView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeJoin(Paint.Join.ROUND);
+
+        imagePaint = new Paint(Paint.DITHER_FLAG);
 
         Log.d(TAG, "DrawingView: ");
     }
@@ -47,8 +51,10 @@ public class DrawingView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.WHITE);
+        if (bitmap == null) {
+            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            bitmap.eraseColor(Color.WHITE);
+        }
 
         canvas = new Canvas(bitmap);
     }
@@ -58,7 +64,11 @@ public class DrawingView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawBitmap(bitmap, 0, 0, paint);
+        if (bitmap == null) {
+            canvas.drawBitmap(bitmap, 0, 0, paint);
+        } else {
+            canvas.drawBitmap(bitmap, new Matrix(), imagePaint);
+        }
         canvas.drawPath(path, paint);
         Log.d(TAG, "onDraw: ");
     }

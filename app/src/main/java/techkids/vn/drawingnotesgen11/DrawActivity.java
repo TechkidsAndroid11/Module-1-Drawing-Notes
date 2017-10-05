@@ -1,8 +1,13 @@
 package techkids.vn.drawingnotesgen11;
 
+import android.content.ClipData;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,24 +43,44 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             openCamera();
             Log.d(TAG, "onCreate: openCamera");
         } else {
-            addDrawingView();
+            addDrawingView(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT, null);
             Log.d(TAG, "onCreate: addDrawingView");
         }
         addListeners();
     }
 
     private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+        Uri uri = ImageUtils.getUriFromImage(this);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, 1);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Bitmap bitmap = ImageUtils.getBitmap(this);
+                addDrawingView(bitmap.getWidth(), bitmap.getHeight(), bitmap);
+            }
+        }
     }
 
     // thêm view vào = code. lý do của việc add = code mà k phải = xml là vì chưa biết trước kích thước view
     // (vẽ lên background trắng -> size full màn hình, vẽ lên ảnh -> size = size ảnh)
-    private void addDrawingView() {
+    private void addDrawingView(int width, int height, Bitmap bitmap) {
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.rl_drawing);
 
-        drawingView = new DrawingView(this);
+        drawingView = new DrawingView(this, bitmap);
         // set kích thước cho view
-        drawingView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        drawingView.setLayoutParams
+                (new ViewGroup.LayoutParams(width, height));
         relativeLayout.addView(drawingView);
     }
 
