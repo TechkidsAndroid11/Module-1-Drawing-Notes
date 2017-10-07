@@ -2,10 +2,8 @@ package techkids.vn.drawingnotesgen11;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.Log;
@@ -22,7 +20,7 @@ public class DrawingView extends View {
     // có thể hiểu như 1 cái bảng/ 1 tờ giấy trắng để vẽ lên
     private Canvas canvas;
     // bút vẽ
-    private Paint paint, imagePaint;
+    private Paint paint;
     // đường vẽ
     private Path path;
     // lưu lại từng nét vẽ sau mỗi lần nhấc bút
@@ -39,8 +37,6 @@ public class DrawingView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeJoin(Paint.Join.ROUND);
-
-        imagePaint = new Paint(Paint.DITHER_FLAG);
 
         Log.d(TAG, "DrawingView: ");
     }
@@ -64,11 +60,7 @@ public class DrawingView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (bitmap == null) {
-            canvas.drawBitmap(bitmap, 0, 0, paint);
-        } else {
-            canvas.drawBitmap(bitmap, new Matrix(), imagePaint);
-        }
+        canvas.drawBitmap(bitmap, 0, 0, paint);
         canvas.drawPath(path, paint);
         Log.d(TAG, "onDraw: ");
     }
